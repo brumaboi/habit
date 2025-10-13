@@ -1,0 +1,78 @@
+# pyproject.toml
+# Purpose: Single config for developer tools (Black, Ruff, mypy, pytest).
+
+############################
+# Code formatting: Black
+############################
+[tool.black]
+line-length = 100                  # Max line length Black will wrap to
+target-version = ["py39"]          # Minimum Python version to format for
+include = '\.pyi?$'                # Format .py and .pyi files
+extend-exclude = '''               # Extra paths Black should ignore
+/(
+  \.venv
+ | venv
+ | build
+ | dist
+ | \.mypy_cache
+ | \.ruff_cache
+ | \.pytest_cache
+)/
+'''
+
+############################
+# Linting: Ruff
+############################
+[tool.ruff]
+line-length = 100                  # Keep consistent with Black
+src = ["src"]                      # Treat code under src/ as the project code
+target-version = "py39"            # Minimum supported Python version
+
+[tool.ruff.lint]
+# Enable families of rules:
+select = [
+  "E",   # pycodestyle errors
+  "F",   # pyflakes (undefined names, unused imports, etc.)
+  "I",   # isort (import sorting)
+  "B",   # flake8-bugbear (common bugs / code smells)
+  "UP",  # pyupgrade (suggest modern syntax)
+  "ANN", # (optional) typing annotations linting
+]
+ignore = [
+  "ANN101",  # don't require type for 'self'
+  "ANN102",  # don't require type for 'cls'
+]
+preview = false                    # Stay on stable rule set
+
+[tool.ruff.lint.isort]
+known-first-party = ["habit"]      # Your own package for import sorting
+combine-as-imports = true          # Merge multiple 'as' imports when safe
+
+############################
+# Static typing: mypy
+############################
+[tool.mypy]
+python_version = "3.9"             # Type-check as Python 3.9+
+mypy_path = "src"                  # Where the package code lives
+packages = ["habit"]               # Package(s) to type-check
+namespace_packages = true          # Safer with src/ layouts
+warn_unused_ignores = true         # Flag useless '# type: ignore'
+warn_redundant_casts = true        # Flag casts that do nothing
+warn_return_any = true             # Discourage implicit 'Any' in returns
+no_implicit_optional = true        # 'Optional[X]' must be explicit
+disallow_untyped_defs = true       # All defs need type hints
+disallow_incomplete_defs = true    # And those hints must be complete
+strict_equality = true             # Warn on == vs is errors, etc.
+ignore_missing_imports = true      # Be lenient about third-party imports
+
+############################
+# Tests: pytest
+############################
+[tool.pytest.ini_options]
+minversion = "7.0"                 # Require at least pytest 7
+testpaths = ["tests"]              # Discover tests under tests/
+addopts = [
+  "-q",                            # Quiet output by default
+  "--strict-markers",              # Fail on unknown markers
+]
+python_files = ["test_*.py"]       # Test file pattern (unittest-compatible)
