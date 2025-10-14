@@ -17,7 +17,8 @@ all: $(NAME)
 # Create a tiny CLI wrapper so you can run ./habit
 $(NAME):
 	@printf '%s\n' '#!/usr/bin/env sh'                                    >  $(NAME)
-	@printf '%s\n' 'PYTHONPATH="$(SRC_DIR)" exec $(PYTHON) -m $(MODULE) "$$@"' >> $(NAME)
+	@printf '%s\n' 'SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"'          >> $(NAME)
+	@printf '%s\n' 'PYTHONPATH="$$SCRIPT_DIR/$(SRC_DIR)" exec $(PYTHON) -m $(MODULE) "$$@"' >> $(NAME)
 	@chmod +x $(NAME)
 	@mkdir -p $(DATA_DIR)
 
